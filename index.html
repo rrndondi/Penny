@@ -10,49 +10,100 @@
 <title>Penny — Personal Finance</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#0f0f1a;--surface:#1a1a2e;--surface2:#24243c;
-  --accent:#c8b5ff;--accent2:#85e89d;--accent3:#ffb347;
-  --danger:#ff7b7b;--warn:#ffb347;--text:#f0eeff;--muted:#8888aa;
+  --accent:#c8b5ff;--accent2:#85e89d;--warn:#ffb347;
+  --danger:#ff7b7b;--text:#f0eeff;--muted:#8888aa;
   --border:rgba(200,181,255,0.12);--radius:16px;
 }
-html,body{height:100%;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;padding-bottom:160px;}
-header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-items:flex-start;}
-.logo{font-family:'DM Serif Display',serif;font-size:26px;color:var(--accent);}
-.logo span{font-size:12px;font-family:'DM Sans',sans-serif;display:block;color:var(--muted);font-weight:300;margin-top:-3px;}
-.month-nav{display:flex;align-items:center;gap:6px;}
+html,body{min-height:100%;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;padding-bottom:170px;}
+
+/* ── ONBOARDING ── */
+#onboarding{position:fixed;inset:0;background:var(--bg);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center;}
+.ob-logo{font-family:'DM Serif Display',serif;font-size:42px;color:var(--accent);margin-bottom:6px;}
+.ob-sub{font-size:14px;color:var(--muted);margin-bottom:36px;}
+.ob-avatar{width:80px;height:80px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;cursor:pointer;position:relative;overflow:hidden;}
+.ob-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.ob-avatar-hint{font-size:11px;color:var(--muted);margin-bottom:24px;}
+.ob-field{width:100%;margin-bottom:14px;text-align:left;}
+.ob-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.ob-field input,.ob-field select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;}
+.ob-field input:focus,.ob-field select:focus{border-color:var(--accent);}
+.ob-field select option{background:var(--surface);}
+.ob-btn{width:100%;background:var(--accent);color:#0f0f1a;border:none;border-radius:12px;padding:16px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;margin-top:8px;}
+.ob-quote{font-family:'DM Serif Display',serif;font-style:italic;font-size:15px;color:var(--muted);margin-bottom:28px;line-height:1.5;}
+
+/* ── HEADER ── */
+header{padding:18px 16px 10px;display:flex;justify-content:space-between;align-items:center;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.avatar-sm{width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;overflow:hidden;}
+.avatar-sm img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.greeting-block{}
+.greeting{font-size:12px;color:var(--muted);}
+.username{font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent);line-height:1.1;}
+.month-nav{display:flex;align-items:center;gap:5px;}
 .month-nav button{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:13px;}
-.month-nav span{font-size:12px;color:var(--muted);min-width:68px;text-align:center;}
-.summary-card{margin:0 14px 14px;background:linear-gradient(135deg,#2a1f5e 0%,#1a2a4a 100%);border-radius:var(--radius);padding:20px;border:1px solid var(--border);position:relative;overflow:hidden;}
-.summary-card::before{content:'';position:absolute;top:-35px;right:-35px;width:100px;height:100px;background:rgba(200,181,255,0.06);border-radius:50%;}
+.month-nav span{font-size:11px;color:var(--muted);min-width:62px;text-align:center;}
+
+/* ── REMINDER BANNER ── */
+.reminder-banner{margin:0 14px 12px;padding:12px 14px;background:rgba(200,181,255,0.08);border:1px solid rgba(200,181,255,0.2);border-radius:11px;display:flex;align-items:center;gap:10px;}
+.reminder-banner p{font-size:12px;color:var(--accent);line-height:1.5;flex:1;}
+.reminder-banner strong{display:block;font-size:13px;margin-bottom:1px;}
+.rb-btn{background:var(--accent);color:#0f0f1a;border:none;border-radius:8px;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.rb-x{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;padding:2px;}
+
+/* ── QUOTE STRIP ── */
+.quote-strip{margin:0 14px 14px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:11px;}
+.quote-text{font-family:'DM Serif Display',serif;font-style:italic;font-size:13px;color:var(--muted);line-height:1.5;}
+.quote-author{font-size:10px;color:var(--muted);margin-top:4px;opacity:.7;}
+
+/* ── SUMMARY CARD ── */
+.summary-card{margin:0 14px 14px;background:linear-gradient(135deg,#2a1f5e 0%,#1a2a4a 100%);border-radius:var(--radius);padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.summary-card::before{content:'';position:absolute;top:-30px;right:-30px;width:90px;height:90px;background:rgba(200,181,255,0.06);border-radius:50%;}
 .balance-label{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
-.balance-amount{font-family:'DM Serif Display',serif;font-size:30px;color:var(--text);line-height:1;margin-bottom:14px;word-break:break-all;}
+.balance-amount{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1;margin-bottom:14px;word-break:break-all;}
 .balance-amount.over{color:var(--danger);}
-.split-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.split-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
 .split-item label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
-.split-item .val{font-size:15px;font-weight:500;margin-top:2px;}
+.split-item .val{font-size:14px;font-weight:500;margin-top:2px;}
 .val.income{color:var(--accent2);}
 .val.spent{color:var(--danger);}
 .progress-bar{margin-top:12px;background:rgba(255,255,255,0.08);border-radius:4px;height:3px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s;}
 .progress-fill.over{background:var(--danger);}
 .progress-label{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--muted);}
-.tabs{display:flex;gap:0;margin:0 14px 14px;background:var(--surface);border-radius:12px;padding:4px;}
+
+/* ── STREAK ── */
+.streak-bar{margin:0 14px 14px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:11px;display:flex;align-items:center;gap:10px;}
+.streak-flame{font-size:22px;}
+.streak-info{flex:1;}
+.streak-title{font-size:13px;font-weight:500;}
+.streak-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.streak-count{font-family:'DM Serif Display',serif;font-size:22px;color:var(--warn);}
+
+/* ── TABS ── */
+.tabs{display:flex;margin:0 14px 14px;background:var(--surface);border-radius:12px;padding:4px;gap:0;}
 .tab{flex:1;padding:8px 4px;text-align:center;font-size:12px;border-radius:9px;cursor:pointer;color:var(--muted);transition:all .15s;border:none;background:none;font-family:'DM Sans',sans-serif;}
 .tab.active{background:var(--surface2);color:var(--text);font-weight:500;}
+
+/* ── SECTIONS ── */
 .section-header{display:flex;justify-content:space-between;align-items:center;padding:0 18px 8px;}
 .section-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
 .section-action{font-size:12px;color:var(--accent);cursor:pointer;}
+
+/* ── CATEGORIES ── */
 .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:0 14px 16px;}
 .cat-btn{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 5px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text);}
-.cat-btn:hover{border-color:var(--accent);}
+.cat-btn:hover,.cat-btn:active{border-color:var(--accent);}
 .cat-btn.active{border-color:var(--accent);background:rgba(200,181,255,0.12);}
 .cat-icon{font-size:20px;margin-bottom:3px;}
 .cat-name{font-size:9px;color:var(--muted);}
 .cat-total{font-size:10px;font-weight:500;margin-top:1px;}
+
+/* ── TRANSACTIONS ── */
 .txn-list{padding:0 14px;}
 .txn-item{display:flex;align-items:center;gap:10px;padding:11px;background:var(--surface);border:1px solid var(--border);border-radius:11px;margin-bottom:7px;animation:fadeUp .2s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
@@ -64,8 +115,15 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
 .txn-amount.pos{color:var(--accent2);}
 .txn-delete{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:3px;margin-left:3px;opacity:0;transition:opacity .15s;flex-shrink:0;}
 .txn-item:hover .txn-delete,.txn-item:active .txn-delete{opacity:1;}
+
+/* ── DEBTS ── */
+.debt-summary{margin:0 14px 12px;padding:12px 14px;background:rgba(255,123,123,0.08);border:1px solid rgba(255,123,123,0.2);border-radius:11px;}
+.debt-sum-row{display:flex;justify-content:space-between;margin-bottom:4px;}
+.debt-sum-row:last-child{margin-bottom:0;}
+.debt-sum-row span{font-size:12px;color:var(--muted);}
+.debt-sum-row strong{font-size:13px;}
 .debt-item{display:flex;align-items:center;gap:10px;padding:11px;background:var(--surface);border:1px solid var(--border);border-radius:11px;margin-bottom:7px;}
-.debt-item.paid{opacity:0.5;}
+.debt-item.paid{opacity:.5;}
 .debt-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;flex-shrink:0;}
 .badge-owe{background:rgba(255,123,123,0.15);color:var(--danger);}
 .badge-owed{background:rgba(133,232,157,0.15);color:var(--accent2);}
@@ -78,8 +136,13 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
 .debt-btn{background:none;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-size:11px;padding:4px 8px;font-family:'DM Sans',sans-serif;transition:all .15s;}
 .debt-btn:hover{border-color:var(--accent2);color:var(--accent2);}
 .debt-btn.del:hover{border-color:var(--danger);color:var(--danger);}
+
+/* ── OBLIGATIONS ── */
+.oblig-summary{margin:0 14px 12px;padding:12px 14px;background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.2);border-radius:11px;display:flex;justify-content:space-between;align-items:center;}
+.oblig-summary span{font-size:12px;color:var(--warn);}
+.oblig-summary strong{font-size:15px;color:var(--warn);}
 .oblig-item{display:flex;align-items:center;gap:10px;padding:11px;background:var(--surface);border:1px solid var(--border);border-radius:11px;margin-bottom:7px;}
-.oblig-item.done{opacity:0.55;}
+.oblig-item.done{opacity:.55;}
 .oblig-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:rgba(255,179,71,0.12);}
 .oblig-info{flex:1;min-width:0;}
 .oblig-name{font-size:13px;font-weight:500;}
@@ -89,33 +152,56 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
 .oblig-check.done{background:var(--accent2);border-color:var(--accent2);color:#0f1a0f;}
 .oblig-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:2px;opacity:0;transition:opacity .15s;}
 .oblig-item:hover .oblig-del,.oblig-item:active .oblig-del{opacity:1;}
-.oblig-summary{margin:0 14px 12px;padding:12px 14px;background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.2);border-radius:11px;display:flex;justify-content:space-between;align-items:center;}
-.oblig-summary span{font-size:12px;color:var(--warn);}
-.oblig-summary strong{font-size:15px;color:var(--warn);}
-.debt-summary{margin:0 14px 12px;padding:12px 14px;background:rgba(255,123,123,0.08);border:1px solid rgba(255,123,123,0.2);border-radius:11px;}
-.debt-sum-row{display:flex;justify-content:space-between;margin-bottom:4px;}
-.debt-sum-row:last-child{margin-bottom:0;}
-.debt-sum-row span{font-size:12px;color:var(--muted);}
-.debt-sum-row strong{font-size:13px;}
+
+/* ── PROFILE TAB ── */
+.profile-card{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;}
+.profile-avatar-lg{width:80px;height:80px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;cursor:pointer;overflow:hidden;position:relative;}
+.profile-avatar-lg img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.profile-name{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);}
+.profile-since{font-size:12px;color:var(--muted);margin-top:2px;}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0;}
+.pstat{background:var(--surface2);border-radius:10px;padding:10px 6px;text-align:center;}
+.pstat-val{font-size:16px;font-weight:500;color:var(--accent);}
+.pstat-label{font-size:10px;color:var(--muted);margin-top:2px;}
+.profile-section{margin:0 14px 14px;}
+.profile-section-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;padding:0 2px;}
+.pref-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;cursor:pointer;}
+.pref-row:hover{border-color:var(--accent);}
+.pref-label{font-size:13px;}
+.pref-value{font-size:12px;color:var(--muted);}
+.pref-arrow{font-size:14px;color:var(--muted);}
+.danger-btn{width:100%;background:rgba(255,123,123,0.1);border:1px solid rgba(255,123,123,0.25);color:var(--danger);border-radius:10px;padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-bottom:8px;}
+
+/* ── REMINDER SETTINGS ── */
+.reminder-time-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;}
+.reminder-time-row label{font-size:13px;flex:1;}
+.toggle{width:44px;height:24px;background:var(--surface2);border-radius:12px;position:relative;cursor:pointer;border:1px solid var(--border);flex-shrink:0;transition:background .2s;}
+.toggle.on{background:var(--accent2);}
+.toggle-knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
+.toggle.on .toggle-knob{left:22px;}
+
+/* ── BOTTOM NAV ── */
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--surface);border-top:1px solid var(--border);padding:10px 14px 24px;display:flex;flex-direction:column;gap:7px;}
 .nav-row{display:flex;gap:7px;}
-.add-btn{flex:1;background:var(--accent);color:#0f0f1a;border:none;border-radius:11px;padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
-.income-btn{background:rgba(133,232,157,0.15);color:var(--accent2);border:1px solid rgba(133,232,157,0.3);border-radius:11px;padding:13px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;}
+.add-btn{flex:1;background:var(--accent);color:#0f0f1a;border:none;border-radius:11px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+.income-btn{background:rgba(133,232,157,0.15);color:var(--accent2);border:1px solid rgba(133,232,157,0.3);border-radius:11px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;}
 .export-row{display:flex;gap:7px;}
-.export-btn{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:9px;padding:8px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .15s;}
+.export-btn{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:9px;padding:8px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;}
 .export-btn:hover{border-color:var(--accent);color:var(--accent);}
-.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,0.72);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s;}
+
+/* ── MODAL ── */
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,0.72);display:flex;align-items:flex-end;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-wrap.open{opacity:1;pointer-events:all;}
 .modal{background:var(--surface);border-radius:22px 22px 0 0;padding:22px 18px 40px;width:100%;max-width:430px;transform:translateY(18px);transition:transform .25s ease;border:1px solid var(--border);border-bottom:none;max-height:88vh;overflow-y:auto;}
 .modal-wrap.open .modal{transform:translateY(0);}
 .modal-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:16px;}
 .field{margin-bottom:12px;}
 .field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
-.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;-webkit-appearance:none;}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;-webkit-appearance:none;}
 .field input:focus,.field select:focus{border-color:var(--accent);}
 .field select option{background:var(--surface2);}
 .cat-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
-.cpb{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 3px;text-align:center;cursor:pointer;color:var(--text);font-size:9px;transition:all .12s;}
+.cpb{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 3px;text-align:center;cursor:pointer;color:var(--text);font-size:9px;}
 .cpb .ci{font-size:18px;display:block;margin-bottom:2px;}
 .cpb.sel{border-color:var(--accent);background:rgba(200,181,255,0.12);}
 .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;}
@@ -125,27 +211,50 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
 .empty-state{text-align:center;padding:30px 20px;color:var(--muted);}
 .empty-state .ei{font-size:36px;margin-bottom:8px;}
 .empty-state p{font-size:13px;line-height:1.6;}
-.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-55px);background:var(--accent2);color:#0f1a0f;padding:9px 18px;border-radius:18px;font-size:12px;font-weight:500;z-index:200;transition:transform .3s;pointer-events:none;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── CHART ── */
 .chart-wrap{padding:0 14px 16px;}
-.chart-bars{display:flex;align-items:flex-end;gap:3px;height:70px;}
+.chart-bars{display:flex;align-items:flex-end;gap:3px;height:68px;}
 .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .bar{width:100%;background:var(--surface2);border-radius:3px 3px 0 0;transition:height .4s;min-height:3px;}
 .bar.filled{background:var(--accent);opacity:.7;}
 .bar.current{background:var(--accent);opacity:1;}
 .bar-label{font-size:9px;color:var(--muted);}
-.install-tip{margin:0 14px 14px;padding:11px 13px;background:rgba(133,232,157,0.07);border:1px solid rgba(133,232,157,0.18);border-radius:11px;display:flex;align-items:center;gap:10px;}
-.install-tip p{font-size:11px;color:var(--accent2);line-height:1.5;}
-.install-tip strong{display:block;font-size:12px;margin-bottom:1px;}
-.install-tip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;margin-left:auto;flex-shrink:0;padding:2px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-55px);background:var(--accent2);color:#0f1a0f;padding:9px 18px;border-radius:18px;font-size:12px;font-weight:500;z-index:400;transition:transform .3s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
 <div class="toast" id="toast"></div>
 
+<!-- ══ ONBOARDING SCREEN ══ -->
+<div id="onboarding">
+  <div class="ob-logo">Penny</div>
+  <div class="ob-sub">Your personal finance companion</div>
+  <p class="ob-quote">"A budget is telling your money where to go instead of wondering where it went."</p>
+  <div class="ob-avatar" id="obAvatar" onclick="document.getElementById('avatarInput').click()">🧑</div>
+  <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+  <p class="ob-avatar-hint">Tap to add a photo (optional)</p>
+  <div class="ob-field"><label>Your name</label><input type="text" id="obName" placeholder="e.g. Amina, John..." maxlength="30"></div>
+  <div class="ob-field"><label>Monthly income goal (TZS)</label><input type="number" id="obIncome" placeholder="e.g. 1500000" inputmode="numeric"></div>
+  <div class="ob-field"><label>Daily reminder time</label><input type="time" id="obTime" value="20:00"></div>
+  <button class="ob-btn" onclick="finishOnboarding()">Start tracking 💰</button>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="mainApp" style="display:none">
+
 <header>
-  <div><div class="logo">Penny <span>Personal Finance · TZS</span></div></div>
+  <div class="header-left">
+    <div class="avatar-sm" id="headerAvatar" onclick="switchTab('profile')">🧑</div>
+    <div class="greeting-block">
+      <div class="greeting" id="greetingText">Good morning,</div>
+      <div class="username" id="headerName">Friend</div>
+    </div>
+  </div>
   <div class="month-nav">
     <button id="prevM">&#8249;</button>
     <span id="monthLabel"></span>
@@ -153,10 +262,25 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
   </div>
 </header>
 
-<div class="install-tip" id="installTip">
-  <div style="font-size:22px;flex-shrink:0">📱</div>
-  <p><strong>Install as app</strong>Tap Share → "Add to Home Screen" to use Penny offline like a native app.</p>
-  <button onclick="document.getElementById('installTip').style.display='none'">✕</button>
+<div class="reminder-banner" id="reminderBanner" style="display:none">
+  <div style="font-size:20px;flex-shrink:0">🔔</div>
+  <p><strong>Enable daily reminders</strong>Get a nudge every day to log your expenses.</p>
+  <button class="rb-btn" onclick="requestNotifPermission()">Enable</button>
+  <button class="rb-x" onclick="document.getElementById('reminderBanner').style.display='none'">✕</button>
+</div>
+
+<div class="quote-strip" id="quoteStrip">
+  <div class="quote-text" id="quoteText"></div>
+  <div class="quote-author" id="quoteAuthor"></div>
+</div>
+
+<div class="streak-bar">
+  <div class="streak-flame">🔥</div>
+  <div class="streak-info">
+    <div class="streak-title" id="streakTitle">Keep it up!</div>
+    <div class="streak-sub" id="streakSub">Log expenses daily to build your streak</div>
+  </div>
+  <div class="streak-count" id="streakCount">0</div>
 </div>
 
 <div class="summary-card">
@@ -176,9 +300,10 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
   <button class="tab active" onclick="switchTab('expenses')">Expenses</button>
   <button class="tab" onclick="switchTab('debts')">Debts</button>
   <button class="tab" onclick="switchTab('obligations')">Obligations</button>
+  <button class="tab" onclick="switchTab('profile')">Profile</button>
 </div>
 
-<!-- EXPENSES TAB -->
+<!-- EXPENSES -->
 <div id="tabExpenses">
   <div class="chart-wrap" id="chartWrap" style="display:none">
     <div class="section-header"><span class="section-title">Last 7 months spending</span></div>
@@ -186,14 +311,14 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
   </div>
   <div class="section-header">
     <span class="section-title">Categories</span>
-    <span id="filterActive" style="font-size:12px;color:var(--accent);display:none;cursor:pointer" onclick="clearFilter()">Clear filter ✕</span>
+    <span id="filterActive" style="font-size:12px;color:var(--accent);display:none;cursor:pointer" onclick="clearFilter()">Clear ✕</span>
   </div>
   <div class="cat-grid" id="catGrid"></div>
   <div class="section-header"><span class="section-title" id="txnTitle">All transactions</span></div>
   <div class="txn-list" id="txnList"></div>
 </div>
 
-<!-- DEBTS TAB -->
+<!-- DEBTS -->
 <div id="tabDebts" style="display:none">
   <div class="debt-summary" id="debtSummary"></div>
   <div class="section-header">
@@ -203,12 +328,9 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
   <div class="txn-list" id="debtList"></div>
 </div>
 
-<!-- OBLIGATIONS TAB -->
+<!-- OBLIGATIONS -->
 <div id="tabObligations" style="display:none">
-  <div class="oblig-summary" id="obligSummary">
-    <span>Monthly obligations total</span>
-    <strong id="obligTotal">TZS 0</strong>
-  </div>
+  <div class="oblig-summary"><span>Monthly obligations total</span><strong id="obligTotal">TZS 0</strong></div>
   <div class="section-header">
     <span class="section-title">This month</span>
     <span class="section-action" onclick="openModal('obligation')">+ Add obligation</span>
@@ -216,18 +338,72 @@ header{padding:20px 20px 10px;display:flex;justify-content:space-between;align-i
   <div class="txn-list" id="obligList"></div>
 </div>
 
-<div class="bottom-nav">
+<!-- PROFILE -->
+<div id="tabProfile" style="display:none">
+  <div class="profile-card">
+    <div class="profile-avatar-lg" id="profileAvatarLg" onclick="document.getElementById('avatarInputProfile').click()">🧑</div>
+    <input type="file" id="avatarInputProfile" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+    <div class="profile-name" id="profileName">Friend</div>
+    <div class="profile-since" id="profileSince">Tracking since today</div>
+    <div class="profile-stats">
+      <div class="pstat"><div class="pstat-val" id="pstatTxn">0</div><div class="pstat-label">Transactions</div></div>
+      <div class="pstat"><div class="pstat-val" id="pstatStreak">0🔥</div><div class="pstat-label">Day streak</div></div>
+      <div class="pstat"><div class="pstat-val" id="pstatMonths">0</div><div class="pstat-label">Months tracked</div></div>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-section-title">Account</div>
+    <div class="pref-row" onclick="openModal('editProfile')">
+      <span class="pref-label">Edit name</span>
+      <span class="pref-value" id="prefName"></span>
+      <span class="pref-arrow">›</span>
+    </div>
+    <div class="pref-row" onclick="openModal('editIncome')">
+      <span class="pref-label">Monthly income goal</span>
+      <span class="pref-value" id="prefIncome"></span>
+      <span class="pref-arrow">›</span>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-section-title">Daily reminder</div>
+    <div class="reminder-time-row">
+      <label>Reminder enabled</label>
+      <div class="toggle" id="reminderToggle" onclick="toggleReminder()"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="reminder-time-row">
+      <label>Reminder time</label>
+      <input type="time" id="reminderTimeInput" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:110px;" onchange="saveReminderTime(this.value)">
+    </div>
+    <div style="padding:8px 14px;font-size:11px;color:var(--muted);line-height:1.5;">
+      Reminders use your browser's notification system. Keep the app open or installed to your home screen for best results.
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <div class="profile-section-title">Data</div>
+    <div class="pref-row" onclick="exportExcel('all')">
+      <span class="pref-label">Export all data to Excel</span>
+      <span class="pref-arrow">›</span>
+    </div>
+    <button class="danger-btn" onclick="confirmClearData()">Clear all data</button>
+  </div>
+</div>
+
+</div><!-- end mainApp -->
+
+<div class="bottom-nav" id="bottomNav" style="display:none">
   <div class="nav-row">
     <button class="income-btn" onclick="openModal('income')">+ Income</button>
     <button class="add-btn" onclick="openModal('expense')">+ Add expense</button>
   </div>
   <div class="export-row">
-    <button class="export-btn" onclick="exportExcel('month')">📊 Export this month</button>
+    <button class="export-btn" onclick="exportExcel('month')">📊 This month</button>
     <button class="export-btn" style="flex:1.4" onclick="exportExcel('all')">📁 Full report</button>
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-wrap" id="modalWrap">
   <div class="modal" id="modalBox"></div>
 </div>
@@ -246,64 +422,240 @@ const CATS=[
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const FULL_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-let data=JSON.parse(localStorage.getItem('pennyV3')||'{"entries":[],"debts":[],"obligations":[]}');
+const QUOTES=[
+  {text:"A budget is telling your money where to go instead of wondering where it went.",author:"— Dave Ramsey"},
+  {text:"Do not save what is left after spending, but spend what is left after saving.",author:"— Warren Buffett"},
+  {text:"Financial freedom is available to those who learn about it and work for it.",author:"— Robert Kiyosaki"},
+  {text:"It's not your salary that makes you rich, it's your spending habits.",author:"— Charles A. Jaffe"},
+  {text:"Wealth consists not in having great possessions, but in having few wants.",author:"— Epictetus"},
+  {text:"The art is not in making money, but in keeping it.",author:"— Proverb"},
+  {text:"Beware of little expenses; a small leak will sink a great ship.",author:"— Benjamin Franklin"},
+  {text:"Money is a terrible master but an excellent servant.",author:"— P.T. Barnum"},
+  {text:"An investment in knowledge pays the best interest.",author:"— Benjamin Franklin"},
+  {text:"The secret to wealth is simple: find a way to do more for others than anyone else does.",author:"— Tony Robbins"},
+];
+
+let data=JSON.parse(localStorage.getItem('pennyV4')||'{"entries":[],"debts":[],"obligations":[]}');
 if(!data.debts)data.debts=[];
 if(!data.obligations)data.obligations=[];
 
+let profile=JSON.parse(localStorage.getItem('pennyProfile')||'null');
 let viewYear,viewMonth,filterCat=null,activeTab='expenses',selCat='food',modalMode='expense';
+let reminderInterval=null;
 
-function save(){localStorage.setItem('pennyV3',JSON.stringify(data));}
-function initDate(){const d=new Date();viewYear=d.getFullYear();viewMonth=d.getMonth();}
+function saveData(){localStorage.setItem('pennyV4',JSON.stringify(data));}
+function saveProfile(){localStorage.setItem('pennyProfile',JSON.stringify(profile));}
+function initDate(){var d=new Date();viewYear=d.getFullYear();viewMonth=d.getMonth();}
 function getMonthKey(y,m){return y+'-'+String(m+1).padStart(2,'0');}
-function monthEntries(){return data.entries.filter(e=>e.month===getMonthKey(viewYear,viewMonth));}
+function monthEntries(){return data.entries.filter(function(e){return e.month===getMonthKey(viewYear,viewMonth);});}
 function fmt(n){return 'TZS '+Math.round(Math.abs(n)).toLocaleString('en-TZ');}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 
-function switchTab(tab){
-  activeTab=tab;
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.className='tab'+(['expenses','debts','obligations'][i]===tab?' active':'');
-  });
-  document.getElementById('tabExpenses').style.display=tab==='expenses'?'':'none';
-  document.getElementById('tabDebts').style.display=tab==='debts'?'':'none';
-  document.getElementById('tabObligations').style.display=tab==='obligations'?'':'none';
-  if(tab==='debts')renderDebts();
-  if(tab==='obligations')renderObligations();
+/* ── ONBOARDING ── */
+function finishOnboarding(){
+  var name=(document.getElementById('obName').value||'').trim()||'Friend';
+  var income=parseFloat(document.getElementById('obIncome').value)||0;
+  var time=document.getElementById('obTime').value||'20:00';
+  profile={name:name,income:income,reminderTime:time,reminderOn:false,avatar:profile&&profile.avatar?profile.avatar:null,since:today(),joinedDate:new Date().toLocaleDateString('en-TZ',{day:'numeric',month:'long',year:'numeric'})};
+  saveProfile();
+  document.getElementById('onboarding').style.display='none';
+  document.getElementById('mainApp').style.display='';
+  document.getElementById('bottomNav').style.display='';
+  initApp();
 }
 
+function handleAvatarUpload(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var dataUrl=e.target.result;
+    if(!profile)profile={};
+    profile.avatar=dataUrl;
+    saveProfile();
+    updateAvatars();
+    document.getElementById('obAvatar').innerHTML='<img src="'+dataUrl+'">';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function updateAvatars(){
+  var src=profile&&profile.avatar?profile.avatar:null;
+  var emoji=profile&&profile.name?profile.name[0].toUpperCase():'🧑';
+  ['headerAvatar','profileAvatarLg'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML=src?'<img src="'+src+'">':emoji;
+  });
+}
+
+/* ── GREETING ── */
+function getGreeting(){
+  var h=new Date().getHours();
+  if(h<12)return'Good morning';
+  if(h<17)return'Good afternoon';
+  if(h<21)return'Good evening';
+  return'Good night';
+}
+
+/* ── STREAK ── */
+function calcStreak(){
+  var days=[];
+  data.entries.forEach(function(e){
+    var d=e.entryDate;
+    if(d&&days.indexOf(d)<0)days.push(d);
+  });
+  days.sort();
+  if(!days.length)return 0;
+  var streak=1;
+  var td=today();
+  var last=days[days.length-1];
+  if(last!==td){
+    var diff=(new Date(td)-new Date(last))/(1000*60*60*24);
+    if(diff>1)return 0;
+  }
+  for(var i=days.length-1;i>0;i--){
+    var diff2=(new Date(days[i])-new Date(days[i-1]))/(1000*60*60*24);
+    if(diff2===1)streak++;
+    else break;
+  }
+  return streak;
+}
+
+function renderStreak(){
+  var s=calcStreak();
+  document.getElementById('streakCount').textContent=s;
+  if(s===0){document.getElementById('streakTitle').textContent='Start your streak!';document.getElementById('streakSub').textContent='Log an expense today to begin';}
+  else if(s===1){document.getElementById('streakTitle').textContent='Streak started!';document.getElementById('streakSub').textContent='Come back tomorrow to keep it going';}
+  else if(s<7){document.getElementById('streakTitle').textContent=s+' days strong!';document.getElementById('streakSub').textContent='Keep logging daily 💪';}
+  else{document.getElementById('streakTitle').textContent='On fire! '+s+' day streak 🔥';document.getElementById('streakSub').textContent='Incredible consistency!';}
+}
+
+/* ── QUOTE ── */
+function renderQuote(){
+  var q=QUOTES[new Date().getDay()%QUOTES.length];
+  document.getElementById('quoteText').textContent='"'+q.text+'"';
+  document.getElementById('quoteAuthor').textContent=q.author;
+}
+
+/* ── REMINDERS ── */
+function requestNotifPermission(){
+  if(!('Notification' in window)){showToast('Notifications not supported on this browser');return;}
+  Notification.requestPermission().then(function(p){
+    if(p==='granted'){
+      profile.reminderOn=true;saveProfile();
+      document.getElementById('reminderBanner').style.display='none';
+      updateReminderToggle();
+      scheduleReminder();
+      showToast('Daily reminders enabled! ✓');
+    }else{showToast('Permission denied — enable in browser settings');}
+  });
+}
+
+function toggleReminder(){
+  if(!profile.reminderOn){requestNotifPermission();}
+  else{profile.reminderOn=false;saveProfile();updateReminderToggle();if(reminderInterval)clearInterval(reminderInterval);showToast('Reminders turned off');}
+}
+
+function updateReminderToggle(){
+  var t=document.getElementById('reminderToggle');
+  if(t){t.className='toggle'+(profile&&profile.reminderOn?' on':'');}
+  var ti=document.getElementById('reminderTimeInput');
+  if(ti&&profile)ti.value=profile.reminderTime||'20:00';
+}
+
+function saveReminderTime(val){
+  if(profile){profile.reminderTime=val;saveProfile();showToast('Reminder time updated!');}
+}
+
+function scheduleReminder(){
+  if(reminderInterval)clearInterval(reminderInterval);
+  if(!profile||!profile.reminderOn)return;
+  if(Notification.permission!=='granted')return;
+  reminderInterval=setInterval(function(){
+    var now=new Date();
+    var parts=(profile.reminderTime||'20:00').split(':');
+    var h=parseInt(parts[0]);var m=parseInt(parts[1]);
+    if(now.getHours()===h&&now.getMinutes()===m){
+      var tdKey=today();
+      var loggedToday=data.entries.some(function(e){return e.entryDate===tdKey;});
+      if(!loggedToday){
+        new Notification('💰 Penny reminder',{body:"Hey "+profile.name+"! Don't forget to log today's expenses.",icon:'',tag:'penny-daily'});
+      }
+    }
+  },60000);
+}
+
+/* ── INIT APP ── */
+function initApp(){
+  initDate();
+  updateAvatars();
+  document.getElementById('greetingText').textContent=getGreeting()+',';
+  document.getElementById('headerName').textContent=profile.name;
+  document.getElementById('profileName').textContent=profile.name;
+  document.getElementById('profileSince').textContent='Tracking since '+profile.joinedDate;
+  document.getElementById('prefName').textContent=profile.name;
+  document.getElementById('prefIncome').textContent=fmt(profile.income||0)+'/mo';
+  renderQuote();
+  updateReminderToggle();
+  if(profile.reminderOn)scheduleReminder();
+  if(!profile.reminderOn&&'Notification' in window&&Notification.permission==='default'){
+    document.getElementById('reminderBanner').style.display='';
+  }
+  render();
+}
+
+/* ── TAB SWITCH ── */
+function switchTab(tab){
+  activeTab=tab;
+  var tabs=['expenses','debts','obligations','profile'];
+  document.querySelectorAll('.tab').forEach(function(t,i){t.className='tab'+(tabs[i]===tab?' active':'');});
+  tabs.forEach(function(t){
+    var el=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el)el.style.display=t===tab?'':'none';
+  });
+  var bn=document.getElementById('bottomNav');
+  bn.style.display=tab==='profile'?'none':'';
+  if(tab==='debts')renderDebts();
+  if(tab==='obligations')renderObligations();
+  if(tab==='profile')renderProfile();
+}
+
+/* ── RENDER MAIN ── */
 function render(){
   document.getElementById('monthLabel').textContent=MONTHS[viewMonth]+' '+viewYear;
-  const entries=monthEntries();
-  const income=entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
-  const spent=entries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
-  const obligTotal=data.obligations.reduce((s,o)=>s+o.amount,0);
-  const unpaidDebt=data.debts.filter(d=>d.direction==='owe'&&!d.paid).reduce((s,d)=>s+d.amount,0);
-  const balance=income-spent;
-  const totalCommitted=spent+obligTotal;
-  const pct=income>0?Math.min((totalCommitted/income)*100,100):0;
-  const isOver=totalCommitted>income&&income>0;
-  const balEl=document.getElementById('balanceAmt');
+  var entries=monthEntries();
+  var income=entries.filter(function(e){return e.type==='income';}).reduce(function(s,e){return s+e.amount;},0);
+  var spent=entries.filter(function(e){return e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0);
+  var obligTotal=data.obligations.reduce(function(s,o){return s+o.amount;},0);
+  var unpaidDebt=data.debts.filter(function(d){return d.direction==='owe'&&!d.paid;}).reduce(function(s,d){return s+d.amount;},0);
+  var balance=income-spent;
+  var totalCommitted=spent+obligTotal;
+  var pct=income>0?Math.min((totalCommitted/income)*100,100):0;
+  var isOver=totalCommitted>income&&income>0;
+  var balEl=document.getElementById('balanceAmt');
   balEl.textContent=fmt(balance-obligTotal);
   balEl.className='balance-amount'+(isOver?' over':'');
   document.getElementById('totalIncome').textContent=fmt(income);
   document.getElementById('totalSpent').textContent=fmt(spent);
   document.getElementById('totalOblig').textContent=fmt(obligTotal);
   document.getElementById('totalDebt').textContent=fmt(unpaidDebt);
-  const fill=document.getElementById('progFill');
+  var fill=document.getElementById('progFill');
   fill.style.width=pct.toFixed(1)+'%';
   fill.className='progress-fill'+(isOver?' over':'');
   document.getElementById('progPct').textContent=Math.round(pct)+'% committed';
   document.getElementById('progRemain').textContent=fmt(Math.max(income-totalCommitted,0))+' free';
+  renderStreak();
   renderCats(entries);renderTxns(entries);renderChart();
   if(activeTab==='debts')renderDebts();
   if(activeTab==='obligations')renderObligations();
 }
 
+/* ── CATEGORIES ── */
 function renderCats(entries){
-  const grid=document.getElementById('catGrid');
-  grid.innerHTML='';
-  CATS.forEach(c=>{
-    const total=entries.filter(e=>e.type==='expense'&&e.cat===c.id).reduce((s,e)=>s+e.amount,0);
-    const btn=document.createElement('div');
+  var grid=document.getElementById('catGrid');grid.innerHTML='';
+  CATS.forEach(function(c){
+    var total=entries.filter(function(e){return e.type==='expense'&&e.cat===c.id;}).reduce(function(s,e){return s+e.amount;},0);
+    var btn=document.createElement('div');
     btn.className='cat-btn'+(filterCat===c.id?' active':'');
     btn.innerHTML='<div class="cat-icon">'+c.icon+'</div><div class="cat-name">'+c.name+'</div><div class="cat-total">'+(total>0?fmt(total):'')+'</div>';
     btn.onclick=function(){filterCat=filterCat===c.id?null:c.id;document.getElementById('filterActive').style.display=filterCat?'':'none';render();};
@@ -312,17 +664,17 @@ function renderCats(entries){
 }
 function clearFilter(){filterCat=null;document.getElementById('filterActive').style.display='none';render();}
 
+/* ── TRANSACTIONS ── */
 function renderTxns(entries){
-  const list=document.getElementById('txnList');
-  let filtered=filterCat?entries.filter(e=>e.cat===filterCat):entries;
+  var list=document.getElementById('txnList');
+  var filtered=filterCat?entries.filter(function(e){return e.cat===filterCat;}):entries;
   filtered=filtered.slice().sort(function(a,b){return b.id-a.id;});
   document.getElementById('txnTitle').textContent=filterCat?(CATS.find(function(c){return c.id===filterCat;})||{name:''}).name+' transactions':'All transactions';
   if(!filtered.length){list.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>No transactions yet.<br>Tap "+ Add expense" to start.</p></div>';return;}
   list.innerHTML='';
   filtered.forEach(function(e){
-    const cat=CATS.find(function(c){return c.id===e.cat;})||CATS[7];
-    const div=document.createElement('div');
-    div.className='txn-item';
+    var cat=CATS.find(function(c){return c.id===e.cat;})||CATS[7];
+    var div=document.createElement('div');div.className='txn-item';
     div.innerHTML='<div class="txn-icon" style="background:'+(e.type==='income'?'rgba(133,232,157,0.15)':cat.color)+'">'+(e.type==='income'?'💰':cat.icon)+'</div>'
       +'<div class="txn-info"><div class="txn-name">'+(e.desc||'Transaction')+'</div><div class="txn-meta">'+(e.type==='income'?'Income':cat.name)+' · '+e.date+'</div></div>'
       +'<div class="txn-amount '+(e.type==='income'?'pos':'neg')+'">'+(e.type==='income'?'+':'-')+fmt(e.amount)+'</div>'
@@ -331,93 +683,103 @@ function renderTxns(entries){
   });
 }
 
+/* ── DEBTS ── */
 function renderDebts(){
-  const list=document.getElementById('debtList');
-  const summary=document.getElementById('debtSummary');
-  const owe=data.debts.filter(function(d){return d.direction==='owe'&&!d.paid;}).reduce(function(s,d){return s+d.amount;},0);
-  const owed=data.debts.filter(function(d){return d.direction==='owed'&&!d.paid;}).reduce(function(s,d){return s+d.amount;},0);
-  const paid=data.debts.filter(function(d){return d.paid;}).length;
+  var list=document.getElementById('debtList');var summary=document.getElementById('debtSummary');
+  var owe=data.debts.filter(function(d){return d.direction==='owe'&&!d.paid;}).reduce(function(s,d){return s+d.amount;},0);
+  var owed=data.debts.filter(function(d){return d.direction==='owed'&&!d.paid;}).reduce(function(s,d){return s+d.amount;},0);
+  var paid=data.debts.filter(function(d){return d.paid;}).length;
   summary.innerHTML='<div class="debt-sum-row"><span>You owe</span><strong style="color:var(--danger)">'+fmt(owe)+'</strong></div>'
     +'<div class="debt-sum-row"><span>Owed to you</span><strong style="color:var(--accent2)">'+fmt(owed)+'</strong></div>'
     +'<div class="debt-sum-row"><span>Settled debts</span><strong style="color:var(--muted)">'+paid+' item'+(paid!==1?'s':'')+'</strong></div>';
-  if(!data.debts.length){list.innerHTML='<div class="empty-state"><div class="ei">💳</div><p>No debts recorded.<br>Tap "+ Add debt" to log one.</p></div>';return;}
+  if(!data.debts.length){list.innerHTML='<div class="empty-state"><div class="ei">💳</div><p>No debts recorded.<br>Tap "+ Add debt" above.</p></div>';return;}
   list.innerHTML='';
-  const sorted=data.debts.slice().sort(function(a,b){return(!a.paid&&b.paid?-1:a.paid&&!b.paid?1:0);});
-  sorted.forEach(function(d){
-    const div=document.createElement('div');
-    div.className='debt-item'+(d.paid?' paid':'');
-    const badgeCls=d.paid?'badge-paid':d.direction==='owe'?'badge-owe':'badge-owed';
-    const badgeText=d.paid?'Settled':d.direction==='owe'?'I owe':'Owed to me';
-    const amtColor=d.paid?'var(--muted)':d.direction==='owe'?'var(--danger)':'var(--accent2)';
+  data.debts.slice().sort(function(a,b){return(!a.paid&&b.paid?-1:a.paid&&!b.paid?1:0);}).forEach(function(d){
+    var div=document.createElement('div');div.className='debt-item'+(d.paid?' paid':'');
+    var bc=d.paid?'badge-paid':d.direction==='owe'?'badge-owe':'badge-owed';
+    var bt=d.paid?'Settled':d.direction==='owe'?'I owe':'Owed to me';
+    var ac=d.paid?'var(--muted)':d.direction==='owe'?'var(--danger)':'var(--accent2)';
     div.innerHTML='<div style="font-size:22px;flex-shrink:0">'+(d.direction==='owe'?'📤':'📥')+'</div>'
       +'<div class="debt-info"><div class="debt-name">'+d.name+'</div><div class="debt-meta">'+(d.person||'')+(d.date?' · '+d.date:'')+'</div></div>'
-      +'<span class="debt-badge '+badgeCls+'">'+badgeText+'</span>'
-      +'<div class="debt-amt" style="color:'+amtColor+'">'+fmt(d.amount)+'</div>'
-      +'<div class="debt-actions">'+(!d.paid?'<button class="debt-btn" onclick="markDebt('+d.id+')">✓ Settle</button>':'')+'<button class="debt-btn del" onclick="deleteDebt('+d.id+')">✕</button></div>';
+      +'<span class="debt-badge '+bc+'">'+bt+'</span>'
+      +'<div class="debt-amt" style="color:'+ac+'">'+fmt(d.amount)+'</div>'
+      +'<div class="debt-actions">'+(!d.paid?'<button class="debt-btn" onclick="markDebt('+d.id+')">✓</button>':'')
+      +'<button class="debt-btn del" onclick="deleteDebt('+d.id+')">✕</button></div>';
     list.appendChild(div);
   });
 }
+function markDebt(id){var d=data.debts.find(function(x){return x.id===id;});if(d){d.paid=true;d.settledDate=new Date().toLocaleDateString('en-TZ',{day:'numeric',month:'short'});}saveData();renderDebts();render();showToast('Debt settled ✓');}
+function deleteDebt(id){data.debts=data.debts.filter(function(d){return d.id!==id;});saveData();renderDebts();render();}
 
-function markDebt(id){
-  const d=data.debts.find(function(x){return x.id===id;});
-  if(d){d.paid=true;d.settledDate=new Date().toLocaleDateString('en-TZ',{day:'numeric',month:'short'});}
-  save();renderDebts();render();showToast('Debt marked as settled!');
-}
-function deleteDebt(id){data.debts=data.debts.filter(function(d){return d.id!==id;});save();renderDebts();render();}
-
+/* ── OBLIGATIONS ── */
 function renderObligations(){
-  const list=document.getElementById('obligList');
-  const mk=getMonthKey(viewYear,viewMonth);
-  const total=data.obligations.reduce(function(s,o){return s+o.amount;},0);
+  var list=document.getElementById('obligList');
+  var mk=getMonthKey(viewYear,viewMonth);
+  var total=data.obligations.reduce(function(s,o){return s+o.amount;},0);
   document.getElementById('obligTotal').textContent=fmt(total);
-  if(!data.obligations.length){list.innerHTML='<div class="empty-state"><div class="ei">📅</div><p>No recurring obligations.<br>Tap "+ Add obligation" to add one.</p></div>';return;}
+  if(!data.obligations.length){list.innerHTML='<div class="empty-state"><div class="ei">📅</div><p>No recurring obligations.<br>Tap "+ Add obligation" above.</p></div>';return;}
   list.innerHTML='';
   data.obligations.forEach(function(o){
-    const doneThisMonth=o.paidMonths&&o.paidMonths.includes(mk);
-    const div=document.createElement('div');
-    div.className='oblig-item'+(doneThisMonth?' done':'');
+    var done=o.paidMonths&&o.paidMonths.includes(mk);
+    var div=document.createElement('div');div.className='oblig-item'+(done?' done':'');
     div.innerHTML='<div class="oblig-icon">'+(o.icon||'📌')+'</div>'
       +'<div class="oblig-info"><div class="oblig-name">'+o.name+'</div><div class="oblig-meta">Due every month'+(o.dueDay?' · day '+o.dueDay:'')+'</div></div>'
       +'<div class="oblig-amt">'+fmt(o.amount)+'</div>'
-      +'<button class="oblig-check '+(doneThisMonth?'done':'')+'" onclick="toggleOblig('+o.id+')">'+(doneThisMonth?'✓':'')+'</button>'
+      +'<button class="oblig-check '+(done?'done':'')+'" onclick="toggleOblig('+o.id+')">'+(done?'✓':'')+'</button>'
       +'<button class="oblig-del" onclick="deleteOblig('+o.id+')">✕</button>';
     list.appendChild(div);
   });
 }
-
 function toggleOblig(id){
-  const o=data.obligations.find(function(x){return x.id===id;});
-  if(!o)return;
+  var o=data.obligations.find(function(x){return x.id===id;});if(!o)return;
   if(!o.paidMonths)o.paidMonths=[];
-  const mk=getMonthKey(viewYear,viewMonth);
+  var mk=getMonthKey(viewYear,viewMonth);
   if(o.paidMonths.includes(mk)){o.paidMonths=o.paidMonths.filter(function(m){return m!==mk;});showToast('Marked unpaid');}
   else{o.paidMonths.push(mk);showToast('Marked as paid ✓');}
-  save();renderObligations();
+  saveData();renderObligations();
 }
-function deleteOblig(id){data.obligations=data.obligations.filter(function(o){return o.id!==id;});save();renderObligations();render();}
+function deleteOblig(id){data.obligations=data.obligations.filter(function(o){return o.id!==id;});saveData();renderObligations();render();}
 
+/* ── PROFILE ── */
+function renderProfile(){
+  if(!profile)return;
+  document.getElementById('profileName').textContent=profile.name;
+  document.getElementById('profileSince').textContent='Tracking since '+profile.joinedDate;
+  document.getElementById('prefName').textContent=profile.name;
+  document.getElementById('prefIncome').textContent=fmt(profile.income||0)+'/mo';
+  document.getElementById('pstatTxn').textContent=data.entries.length;
+  document.getElementById('pstatStreak').textContent=calcStreak()+'🔥';
+  var months=new Set(data.entries.map(function(e){return e.month;}));
+  document.getElementById('pstatMonths').textContent=months.size;
+  updateReminderToggle();
+}
+function confirmClearData(){
+  if(confirm('Are you sure you want to delete ALL data? This cannot be undone.')){
+    data={entries:[],debts:[],obligations:[]};saveData();render();showToast('All data cleared');switchTab('expenses');}
+}
+
+/* ── CHART ── */
 function renderChart(){
-  const wrap=document.getElementById('chartWrap');
-  const bars=document.getElementById('chartBars');
+  var wrap=document.getElementById('chartWrap');var bars=document.getElementById('chartBars');
   if(data.entries.length<2){wrap.style.display='none';return;}
   wrap.style.display='block';
-  const months=[];
+  var months=[];
   for(var i=6;i>=0;i--){var d=new Date(viewYear,viewMonth-i,1);months.push({y:d.getFullYear(),m:d.getMonth(),label:MONTHS[d.getMonth()].slice(0,3)});}
-  const totals=months.map(function(x){return data.entries.filter(function(e){return e.month===getMonthKey(x.y,x.m)&&e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0);});
-  const maxT=Math.max.apply(null,totals.concat([1]));
+  var totals=months.map(function(x){return data.entries.filter(function(e){return e.month===getMonthKey(x.y,x.m)&&e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0);});
+  var maxT=Math.max.apply(null,totals.concat([1]));
   bars.innerHTML='';
   months.forEach(function(x,i){
-    var h=Math.round((totals[i]/maxT)*66);
+    var h=Math.round((totals[i]/maxT)*64);
     var col=document.createElement('div');col.className='bar-col';
     col.innerHTML='<div class="bar '+(totals[i]>0?(i===6?'current':'filled'):'')+'" style="height:'+Math.max(h,3)+'px"></div><div class="bar-label">'+x.label+'</div>';
     bars.appendChild(col);
   });
 }
 
+/* ── MODALS ── */
 function openModal(mode){
-  modalMode=mode;
-  const box=document.getElementById('modalBox');
-  selCat='food';
+  modalMode=mode;selCat='food';
+  var box=document.getElementById('modalBox');
   if(mode==='expense'||mode==='income'){
     box.innerHTML='<div class="modal-title">'+(mode==='income'?'Add income':'Add expense')+'</div>'
       +'<div class="field"><label>Amount (TZS)</label><input type="number" id="fAmt" placeholder="0" step="1" min="0" inputmode="numeric"></div>'
@@ -429,7 +791,7 @@ function openModal(mode){
     box.innerHTML='<div class="modal-title">Log a debt</div>'
       +'<div class="field"><label>Direction</label><select id="fDir"><option value="owe">I owe someone</option><option value="owed">Someone owes me</option></select></div>'
       +'<div class="row2"><div class="field"><label>Amount (TZS)</label><input type="number" id="fAmt" placeholder="0" step="1" min="0" inputmode="numeric"></div>'
-      +'<div class="field"><label>Person / creditor</label><input type="text" id="fPerson" placeholder="Name"></div></div>'
+      +'<div class="field"><label>Person</label><input type="text" id="fPerson" placeholder="Name"></div></div>'
       +'<div class="field"><label>Description</label><input type="text" id="fDesc" placeholder="What for?"></div>'
       +'<div class="field"><label>Due date (optional)</label><input type="date" id="fDate"></div>'
       +'<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveDebt()">Save</button></div>';
@@ -440,6 +802,14 @@ function openModal(mode){
       +'<div class="field"><label>Due day of month</label><input type="number" id="fDay" placeholder="1 – 31" min="1" max="31" inputmode="numeric"></div></div>'
       +'<div class="field"><label>Icon (emoji)</label><input type="text" id="fIcon" placeholder="🏠 🏫 📺 💧" maxlength="2"></div>'
       +'<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveObligation()">Save</button></div>';
+  }else if(mode==='editProfile'){
+    box.innerHTML='<div class="modal-title">Edit profile</div>'
+      +'<div class="field"><label>Your name</label><input type="text" id="fName" value="'+(profile.name||'')+'" maxlength="30"></div>'
+      +'<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveProfName()">Save</button></div>';
+  }else if(mode==='editIncome'){
+    box.innerHTML='<div class="modal-title">Monthly income goal</div>'
+      +'<div class="field"><label>Amount (TZS)</label><input type="number" id="fAmt" value="'+(profile.income||'')+'" inputmode="numeric"></div>'
+      +'<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveProfIncome()">Save</button></div>';
   }
   document.getElementById('modalWrap').classList.add('open');
   setTimeout(function(){var f=document.getElementById('fAmt')||document.getElementById('fName');if(f)f.focus();},300);
@@ -447,9 +817,7 @@ function openModal(mode){
 function closeModal(){document.getElementById('modalWrap').classList.remove('open');}
 
 function renderCatPick(){
-  const pick=document.getElementById('catPick');
-  if(!pick)return;
-  pick.innerHTML='';
+  var pick=document.getElementById('catPick');if(!pick)return;pick.innerHTML='';
   CATS.forEach(function(c){
     var b=document.createElement('div');b.className='cpb'+(selCat===c.id?' sel':'');
     b.innerHTML='<span class="ci">'+c.icon+'</span>'+c.name;
@@ -459,44 +827,54 @@ function renderCatPick(){
 }
 
 function saveExpense(){
-  const amt=parseFloat(document.getElementById('fAmt').value);
-  const desc=(document.getElementById('fDesc').value||'').trim();
+  var amt=parseFloat(document.getElementById('fAmt').value);
+  var desc=(document.getElementById('fDesc').value||'').trim();
   if(!amt||amt<=0){document.getElementById('fAmt').style.borderColor='var(--danger)';return;}
-  const d=new Date();
-  data.entries.push({id:Date.now(),type:modalMode,amount:amt,desc:desc||(modalMode==='income'?'Income':'Expense'),cat:selCat,month:getMonthKey(viewYear,viewMonth),date:d.toLocaleDateString('en-TZ',{day:'numeric',month:'short'})});
-  save();closeModal();render();
+  var d=new Date();
+  data.entries.push({id:Date.now(),type:modalMode,amount:amt,desc:desc||(modalMode==='income'?'Income':'Expense'),cat:selCat,month:getMonthKey(viewYear,viewMonth),date:d.toLocaleDateString('en-TZ',{day:'numeric',month:'short'}),entryDate:today()});
+  saveData();closeModal();render();
 }
-
 function saveDebt(){
-  const amt=parseFloat(document.getElementById('fAmt').value);
-  const dir=document.getElementById('fDir').value;
-  const person=(document.getElementById('fPerson').value||'').trim();
-  const desc=(document.getElementById('fDesc').value||'').trim();
-  const dateVal=document.getElementById('fDate').value;
+  var amt=parseFloat(document.getElementById('fAmt').value);
+  var dir=document.getElementById('fDir').value;
+  var person=(document.getElementById('fPerson').value||'').trim();
+  var desc=(document.getElementById('fDesc').value||'').trim();
+  var dv=document.getElementById('fDate').value;
   if(!amt||amt<=0){document.getElementById('fAmt').style.borderColor='var(--danger)';return;}
-  data.debts.push({id:Date.now(),direction:dir,amount:amt,person:person,name:desc||'Debt',date:dateVal?new Date(dateVal).toLocaleDateString('en-TZ',{day:'numeric',month:'short',year:'numeric'}):'',paid:false});
-  save();closeModal();switchTab('debts');showToast('Debt logged!');
+  data.debts.push({id:Date.now(),direction:dir,amount:amt,person:person,name:desc||'Debt',date:dv?new Date(dv).toLocaleDateString('en-TZ',{day:'numeric',month:'short',year:'numeric'}):'',paid:false});
+  saveData();closeModal();switchTab('debts');showToast('Debt logged!');
 }
-
 function saveObligation(){
-  const name=(document.getElementById('fName').value||'').trim();
-  const amt=parseFloat(document.getElementById('fAmt').value);
-  const day=document.getElementById('fDay').value;
-  const icon=(document.getElementById('fIcon').value||'').trim()||'📌';
+  var name=(document.getElementById('fName').value||'').trim();
+  var amt=parseFloat(document.getElementById('fAmt').value);
+  var day=document.getElementById('fDay').value;
+  var icon=(document.getElementById('fIcon').value||'').trim()||'📌';
   if(!name){document.getElementById('fName').style.borderColor='var(--danger)';return;}
   if(!amt||amt<=0){document.getElementById('fAmt').style.borderColor='var(--danger)';return;}
   data.obligations.push({id:Date.now(),name:name,amount:amt,dueDay:day?parseInt(day):null,icon:icon,paidMonths:[]});
-  save();closeModal();switchTab('obligations');render();showToast('Obligation added!');
+  saveData();closeModal();switchTab('obligations');render();showToast('Obligation added!');
 }
+function saveProfName(){
+  var n=(document.getElementById('fName').value||'').trim();
+  if(!n)return;
+  profile.name=n;saveProfile();closeModal();
+  document.getElementById('headerName').textContent=n;
+  renderProfile();showToast('Name updated!');
+}
+function saveProfIncome(){
+  var amt=parseFloat(document.getElementById('fAmt').value)||0;
+  profile.income=amt;saveProfile();closeModal();
+  renderProfile();showToast('Income goal updated!');
+}
+function deleteEntry(id){data.entries=data.entries.filter(function(e){return e.id!==id;});saveData();render();}
 
-function deleteEntry(id){data.entries=data.entries.filter(function(e){return e.id!==id;});save();render();}
-
+/* ── EXCEL EXPORT ── */
 function exportExcel(scope){
-  const wb=XLSX.utils.book_new();
-  const entries=scope==='month'?monthEntries():data.entries.slice().sort(function(a,b){return a.id-b.id;});
+  var wb=XLSX.utils.book_new();
+  var entries=scope==='month'?monthEntries():data.entries.slice().sort(function(a,b){return a.id-b.id;});
   if(!entries.length&&!data.debts.length&&!data.obligations.length){showToast('No data to export!');return;}
   if(entries.length){
-    const rows=[['Date','Description','Type','Category','Amount (TZS)','Month']];
+    var rows=[['Date','Description','Type','Category','Amount (TZS)','Month']];
     entries.slice().sort(function(a,b){return b.id-a.id;}).forEach(function(e){
       var cat=CATS.find(function(c){return c.id===e.cat;})||CATS[7];
       rows.push([e.date,e.desc||'Transaction',e.type==='income'?'Income':'Expense',e.type==='income'?'—':cat.name,e.type==='income'?e.amount:-e.amount,e.month]);
@@ -505,28 +883,28 @@ function exportExcel(scope){
     XLSX.utils.book_append_sheet(wb,s,'Transactions');
   }
   if(data.debts.length){
-    const rows=[['Person','Description','Direction','Amount (TZS)','Due Date','Status','Settled Date']];
+    var rows=[['Person','Description','Direction','Amount (TZS)','Due Date','Status','Settled Date']];
     data.debts.forEach(function(d){rows.push([d.person||'',d.name,d.direction==='owe'?'I owe':'Owed to me',d.amount,d.date||'',d.paid?'Settled':'Outstanding',d.settledDate||'']);});
     var s=XLSX.utils.aoa_to_sheet(rows);s['!cols']=[{wch:16},{wch:24},{wch:14},{wch:16},{wch:14},{wch:12},{wch:14}];
     XLSX.utils.book_append_sheet(wb,s,'Debts');
   }
   if(data.obligations.length){
     var mk=getMonthKey(viewYear,viewMonth);
-    const rows=[['Obligation','Amount (TZS)','Due Day','Paid This Month']];
+    var rows=[['Obligation','Amount (TZS)','Due Day','Paid This Month']];
     data.obligations.forEach(function(o){rows.push([o.name,o.amount,o.dueDay||'',o.paidMonths&&o.paidMonths.includes(mk)?'Yes':'No']);});
     rows.push(['TOTAL',data.obligations.reduce(function(s,o){return s+o.amount;},0),'','']);
     var s=XLSX.utils.aoa_to_sheet(rows);s['!cols']=[{wch:24},{wch:18},{wch:12},{wch:16}];
     XLSX.utils.book_append_sheet(wb,s,'Obligations');
   }
-  var months=[...new Set((scope==='month'?monthEntries():data.entries).map(function(e){return e.month;}))].sort();
-  if(months.length){
-    var obligTotal=data.obligations.reduce(function(s,o){return s+o.amount;},0);
-    const rows=[['Month','Income (TZS)','Expenses (TZS)','Obligations (TZS)','Balance (TZS)']];
-    months.forEach(function(mo){
+  var mths=[...new Set((scope==='month'?monthEntries():data.entries).map(function(e){return e.month;}))].sort();
+  if(mths.length){
+    var ot=data.obligations.reduce(function(s,o){return s+o.amount;},0);
+    var rows=[['Month','Income (TZS)','Expenses (TZS)','Obligations (TZS)','Balance (TZS)']];
+    mths.forEach(function(mo){
       var mes=data.entries.filter(function(e){return e.month===mo;});
       var inc=mes.filter(function(e){return e.type==='income';}).reduce(function(s,e){return s+e.amount;},0);
       var exp=mes.filter(function(e){return e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0);
-      rows.push([mo,inc,exp,obligTotal,inc-exp-obligTotal]);
+      rows.push([mo,inc,exp,ot,inc-exp-ot]);
     });
     var s=XLSX.utils.aoa_to_sheet(rows);s['!cols']=[{wch:12},{wch:16},{wch:16},{wch:18},{wch:14}];
     XLSX.utils.book_append_sheet(wb,s,'Monthly Summary');
@@ -536,17 +914,24 @@ function exportExcel(scope){
   showToast('Excel file downloaded!');
 }
 
+/* ── TOAST ── */
 function showToast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(function(){t.classList.remove('show');},2200);
 }
 
+/* ── EVENTS ── */
 document.getElementById('prevM').onclick=function(){viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--;}render();};
 document.getElementById('nextM').onclick=function(){viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++;}render();};
 document.getElementById('modalWrap').onclick=function(e){if(e.target===document.getElementById('modalWrap'))closeModal();};
 
-initDate();render();
+/* ── BOOT ── */
+if(profile){
+  document.getElementById('onboarding').style.display='none';
+  document.getElementById('mainApp').style.display='';
+  document.getElementById('bottomNav').style.display='';
+  initApp();
+}
 </script>
 </body>
 </html>
