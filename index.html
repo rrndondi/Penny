@@ -470,13 +470,14 @@ function nowDate(){return new Date().toLocaleDateString('en-TZ',{day:'numeric',m
 
 /* ── ACCOUNT BALANCE ── */
 function getAccBalance(accId){
+  var id=Number(accId);
   var bal=0;
   data.entries.forEach(function(e){
-    if(e.accId===accId){bal+=e.type==='income'?e.amount:-e.amount;}
+    if(Number(e.accId)===id){bal+=e.type==='income'?e.amount:-e.amount;}
   });
   data.transfers.forEach(function(t){
-    if(t.toAccId===accId)bal+=t.amount;
-    if(t.fromAccId===accId)bal-=t.amount;
+    if(Number(t.toAccId)===id)bal+=t.amount;
+    if(Number(t.fromAccId)===id)bal-=t.amount;
   });
   return bal;
 }
@@ -627,7 +628,7 @@ function renderAccountsScroll(){
   data.accounts.forEach(function(a){
     var bal=getAccBalance(a.id);
     var card=document.createElement('div');
-    card.className='acc-card'+(selectedAccId===a.id?' active':'');
+    card.className='acc-card'+(Number(selectedAccId)===Number(a.id)?' active':'');
     card.innerHTML='<div class="acc-icon">'+a.icon+'</div>'
       +'<div class="acc-name">'+a.name+'</div>'
       +'<div class="acc-type">'+a.typeName+'</div>'
@@ -646,15 +647,15 @@ function renderAccDetail(){
   var area=document.getElementById('accDetailArea');
   var list=document.getElementById('accTxnList');
   if(!data.accounts.length){area.innerHTML='<div class="empty-state"><div class="ei">🏦</div><p>No accounts yet.<br>Tap "+ Add account" to get started.</p></div>';list.innerHTML='';return;}
-  var acc=selectedAccId?data.accounts.find(function(a){return a.id===selectedAccId;}):data.accounts[0];
+  var acc=selectedAccId?data.accounts.find(function(a){return Number(a.id)===Number(selectedAccId);}):data.accounts[0];
   if(!acc){acc=data.accounts[0];selectedAccId=acc.id;}
   var bal=getAccBalance(acc.id);
-  var accEntries=data.entries.filter(function(e){return e.accId===acc.id;});
-  var accTransfers=data.transfers.filter(function(t){return t.fromAccId===acc.id||t.toAccId===acc.id;});
+  var accEntries=data.entries.filter(function(e){return Number(e.accId)===Number(acc.id);});
+  var accTransfers=data.transfers.filter(function(t){return Number(t.fromAccId)===Number(acc.id)||Number(t.toAccId)===Number(acc.id);});
   var totalIn=accEntries.filter(function(e){return e.type==='income';}).reduce(function(s,e){return s+e.amount;},0)
-    +data.transfers.filter(function(t){return t.toAccId===acc.id;}).reduce(function(s,t){return s+t.amount;},0);
+    +data.transfers.filter(function(t){return Number(t.toAccId)===Number(acc.id);}).reduce(function(s,t){return s+t.amount;},0);
   var totalOut=accEntries.filter(function(e){return e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0)
-    +data.transfers.filter(function(t){return t.fromAccId===acc.id;}).reduce(function(s,t){return s+t.amount;},0);
+    +data.transfers.filter(function(t){return Number(t.fromAccId)===Number(acc.id);}).reduce(function(s,t){return s+t.amount;},0);
   area.innerHTML='<div class="acc-detail">'
     +'<div class="acc-detail-header"><div class="acc-detail-icon">'+acc.icon+'</div><div><div class="acc-detail-name">'+acc.name+'</div><div class="acc-detail-type">'+acc.typeName+'</div></div></div>'
     +'<div class="acc-detail-bal'+(bal<0?' neg':'')+'">'+fmt(bal)+'</div>'
@@ -669,8 +670,8 @@ function renderAccDetail(){
   var allTxns=[];
   accEntries.forEach(function(e){allTxns.push({id:e.id,type:e.type,amount:e.amount,desc:e.desc,date:e.date,cat:e.cat,isTransfer:false});});
   accTransfers.forEach(function(t){
-    var isIn=t.toAccId===acc.id;
-    var other=data.accounts.find(function(a){return a.id===(isIn?t.fromAccId:t.toAccId);});
+    var isIn=Number(t.toAccId)===Number(acc.id);
+    var other=data.accounts.find(function(a){return Number(a.id)===Number(isIn?t.fromAccId:t.toAccId);});
     allTxns.push({id:t.id,type:isIn?'income':'expense',amount:t.amount,desc:'Transfer '+(isIn?'from':'to')+' '+(other?other.name:'account'),date:t.date,isTransfer:true});
   });
   allTxns.sort(function(a,b){return b.id-a.id;});
@@ -690,7 +691,7 @@ function renderAccDetail(){
 function deleteAccount(id){
   if(!confirm('Remove this account? Transactions linked to it will still exist.'))return;
   data.accounts=data.accounts.filter(function(a){return a.id!=id;});
-  if(selectedAccId==id)selectedAccId=data.accounts.length?data.accounts[0].id:null;
+  if(Number(selectedAccId)===Number(id))selectedAccId=data.accounts.length?data.accounts[0].id:null;
   saveData();render();showToast('Account removed');
 }
 
@@ -717,7 +718,7 @@ function renderTxns(entries){
   list.innerHTML='';
   filtered.forEach(function(e){
     var cat=CATS.find(function(c){return c.id===e.cat;})||CATS[7];
-    var acc=data.accounts.find(function(a){return a.id===e.accId;});
+    var acc=data.accounts.find(function(a){return Number(a.id)===Number(e.accId);});
     var div=document.createElement('div');div.className='txn-item';
     div.innerHTML='<div class="txn-icon" style="background:'+(e.type==='income'?'rgba(133,232,157,0.15)':cat.color)+'">'+(e.type==='income'?'💰':cat.icon)+'</div>'
       +'<div class="txn-info"><div class="txn-name">'+(e.desc||'Transaction')+'</div>'
@@ -728,10 +729,10 @@ function renderTxns(entries){
   });
   /* also show month transfers in expenses tab */
   var mk=getMonthKey(viewYear,viewMonth);
-  var mTransfers=data.transfers.filter(function(t){return t.monthKey===mk;});
+  var mTransfers=(data.transfers||[]).filter(function(t){return t.monthKey===mk;});
   mTransfers.forEach(function(t){
-    var fromAcc=data.accounts.find(function(a){return a.id===t.fromAccId;});
-    var toAcc=data.accounts.find(function(a){return a.id===t.toAccId;});
+    var fromAcc=data.accounts.find(function(a){return Number(a.id)===Number(t.fromAccId);});
+    var toAcc=data.accounts.find(function(a){return Number(a.id)===Number(t.toAccId);});
     var div=document.createElement('div');div.className='txn-item xfer-item';
     div.innerHTML='<div class="txn-icon" style="background:rgba(200,181,255,0.12)">⇄</div>'
       +'<div class="txn-info"><div class="txn-name">'+(t.desc||'Transfer')+'</div>'
@@ -833,10 +834,11 @@ function renderChart(){
 }
 
 /* ── MODALS ── */
-function buildAccSelect(labelText,elId,includeNone){
-  var opts=includeNone?'<option value="">— none —</option>':'';
+function buildAccSelect(labelText,elId,optional){
+  var opts=optional?'<option value="">— none —</option>':'';
   data.accounts.forEach(function(a){opts+='<option value="'+a.id+'">'+a.icon+' '+a.name+'</option>';});
-  return '<div class="field"><label>'+labelText+'</label><select id="'+elId+'">'+opts+'</select></div>';
+  var req=optional?'':' <span style="color:var(--danger);font-size:10px">required</span>';
+  return '<div class="field"><label>'+labelText+req+'</label><select id="'+elId+'">'+opts+'</select></div>';
 }
 
 function openModal(mode){
@@ -846,7 +848,7 @@ function openModal(mode){
     box.innerHTML='<div class="modal-title">'+(mode==='income'?'Add income':'Add expense')+'</div>'
       +'<div class="field"><label>Amount (TZS)</label><input type="number" id="fAmt" placeholder="0" step="1" min="0" inputmode="numeric"></div>'
       +'<div class="field"><label>Description</label><input type="text" id="fDesc" placeholder="What was this for?"></div>'
-      +buildAccSelect(mode==='income'?'Received into account':'Paid from account','fAcc',true)
+      +buildAccSelect(mode==='income'?'Received into account':'Paid from account','fAcc',data.accounts.length===0)
       +(mode==='expense'?'<div class="field"><label>Category</label><div class="cat-pick" id="catPick"></div></div>':'')
       +'<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveExpense()">Save</button></div>';
     if(mode==='expense')renderCatPick();
@@ -911,18 +913,21 @@ function renderCatPick(){
 function saveExpense(){
   var amt=parseFloat(document.getElementById('fAmt').value);
   var desc=(document.getElementById('fDesc').value||'').trim();
-  var accEl=document.getElementById('fAcc');var accId=accEl?accEl.value||null:null;
+  var accEl=document.getElementById('fAcc');
+  var accVal=accEl?accEl.value:'';
+  var accId=accVal?Number(accVal):null;
   if(!amt||amt<=0){document.getElementById('fAmt').style.borderColor='var(--danger)';return;}
+  if(data.accounts.length>0&&!accId){showToast('Please select an account');accEl.style.borderColor='var(--danger)';return;}
   data.entries.push({id:Date.now(),type:modalMode,amount:amt,desc:desc||(modalMode==='income'?'Income':'Expense'),cat:selCat,accId:accId,month:getMonthKey(viewYear,viewMonth),date:nowDate(),entryDate:today()});
   saveData();closeModal();render();
 }
 function saveTransfer(){
   var amt=parseFloat(document.getElementById('fAmt').value);
-  var from=document.getElementById('fFrom').value;
-  var to=document.getElementById('fTo').value;
+  var from=Number(document.getElementById('fFrom').value);
+  var to=Number(document.getElementById('fTo').value);
   var desc=(document.getElementById('fDesc').value||'').trim();
   if(!amt||amt<=0){document.getElementById('fAmt').style.borderColor='var(--danger)';return;}
-  if(from===to){showToast('From and To accounts must be different');return;}
+  if(from===to){showToast('Select different accounts');return;}
   data.transfers.push({id:Date.now(),fromAccId:from,toAccId:to,amount:amt,desc:desc||'Transfer',date:nowDate(),monthKey:getMonthKey(viewYear,viewMonth)});
   saveData();closeModal();render();showToast('Transfer recorded ✓');
 }
@@ -955,10 +960,10 @@ function saveAccount(){
   var accType=ACC_TYPES.find(function(t){return t.id===typeId;})||ACC_TYPES[0];
   if(!icon)icon=accType.icon;
   var colorIdx=data.accounts.length%ACC_COLORS.length;
-  var accId=Date.now();
+  var accId=Number(Date.now());
   data.accounts.push({id:accId,name:name,type:typeId,typeName:accType.name,icon:icon,color:ACC_COLORS[colorIdx]});
   if(amt!==0){
-    data.entries.push({id:Date.now()+1,type:amt>0?'income':'expense',amount:Math.abs(amt),desc:'Opening balance',cat:'other',accId:accId,month:getMonthKey(viewYear,viewMonth),date:nowDate(),entryDate:today()});
+    data.entries.push({id:Number(Date.now())+1,type:amt>0?'income':'expense',amount:Math.abs(amt),desc:'Opening balance',cat:'other',accId:Number(accId),month:getMonthKey(viewYear,viewMonth),date:nowDate(),entryDate:today()});
   }
   selectedAccId=accId;
   saveData();closeModal();render();showToast(name+' added!');
@@ -978,7 +983,7 @@ function exportExcel(scope){
     var rows=[['Date','Description','Type','Category','Account','Amount (TZS)','Month']];
     entries.slice().sort(function(a,b){return b.id-a.id;}).forEach(function(e){
       var cat=CATS.find(function(c){return c.id===e.cat;})||CATS[7];
-      var acc=data.accounts.find(function(a){return a.id===e.accId;});
+      var acc=data.accounts.find(function(a){return Number(a.id)===Number(e.accId);});
       rows.push([e.date,e.desc||'Transaction',e.type==='income'?'Income':'Expense',e.type==='income'?'—':cat.name,acc?acc.name:'—',e.type==='income'?e.amount:-e.amount,e.month]);
     });
     var s=XLSX.utils.aoa_to_sheet(rows);s['!cols']=[{wch:12},{wch:26},{wch:10},{wch:14},{wch:14},{wch:18},{wch:10}];
@@ -990,10 +995,10 @@ function exportExcel(scope){
     var rows=[['Account','Type','Balance (TZS)','Total In (TZS)','Total Out (TZS)']];
     data.accounts.forEach(function(a){
       var bal=getAccBalance(a.id);
-      var totalIn=data.entries.filter(function(e){return e.accId===a.id&&e.type==='income';}).reduce(function(s,e){return s+e.amount;},0)
-        +data.transfers.filter(function(t){return t.toAccId===a.id;}).reduce(function(s,t){return s+t.amount;},0);
-      var totalOut=data.entries.filter(function(e){return e.accId===a.id&&e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0)
-        +data.transfers.filter(function(t){return t.fromAccId===a.id;}).reduce(function(s,t){return s+t.amount;},0);
+      var totalIn=data.entries.filter(function(e){return Number(e.accId)===Number(a.id)&&e.type==='income';}).reduce(function(s,e){return s+e.amount;},0)
+        +data.transfers.filter(function(t){return Number(t.toAccId)===Number(a.id);}).reduce(function(s,t){return s+t.amount;},0);
+      var totalOut=data.entries.filter(function(e){return Number(e.accId)===Number(a.id)&&e.type==='expense';}).reduce(function(s,e){return s+e.amount;},0)
+        +data.transfers.filter(function(t){return Number(t.fromAccId)===Number(a.id);}).reduce(function(s,t){return s+t.amount;},0);
       rows.push([a.name,a.typeName,bal,totalIn,totalOut]);
     });
     rows.push(['TOTAL NET WORTH','',getTotalNetWorth(),'','']);
@@ -1006,7 +1011,7 @@ function exportExcel(scope){
     var rows=[['Date','From Account','To Account','Amount (TZS)','Note']];
     data.transfers.forEach(function(t){
       var from=data.accounts.find(function(a){return a.id===t.fromAccId;});
-      var to=data.accounts.find(function(a){return a.id===t.toAccId;});
+      var to=data.accounts.find(function(a){return Number(a.id)===Number(t.toAccId);});
       rows.push([t.date,from?from.name:'?',to?to.name:'?',t.amount,t.desc||'']);
     });
     var s=XLSX.utils.aoa_to_sheet(rows);s['!cols']=[{wch:12},{wch:18},{wch:18},{wch:16},{wch:24}];
