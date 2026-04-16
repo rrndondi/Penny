@@ -476,18 +476,46 @@ var QUOTES=[
 var ACC_COLORS=['#c8b5ff','#85e89d','#ffb347','#ff7b7b','#5bcefa','#f5a623'];
 var TRASH_DAYS=7;
 
-var data=JSON.parse(localStorage.getItem('pennyV6')||'{"entries":[],"debts":[],"obligations":[],"accounts":[],"transfers":[],"trash":[]}');
+/* ── DATA MIGRATION ── reads from any old version key and migrates forward */
+var STORAGE_KEY='pennyData';
+function loadData(){
+  /* Try current key first */
+  var raw=localStorage.getItem(STORAGE_KEY);
+  if(raw){try{return JSON.parse(raw);}catch(e){}}
+  /* Try all legacy keys, newest first */
+  var legacyKeys=['pennyV6','pennyV5','pennyV4','pennyV3','pennyData'];
+  for(var i=0;i<legacyKeys.length;i++){
+    raw=localStorage.getItem(legacyKeys[i]);
+    if(raw){
+      try{
+        var d=JSON.parse(raw);
+        /* Migrate: save under new canonical key immediately */
+        localStorage.setItem(STORAGE_KEY,raw);
+        /* Remove old keys to avoid confusion */
+        legacyKeys.forEach(function(k){if(k!==STORAGE_KEY)localStorage.removeItem(k);});
+        console.log('Penny: migrated data from',legacyKeys[i]);
+        return d;
+      }catch(e){}
+    }
+  }
+  return {entries:[],debts:[],obligations:[],accounts:[],transfers:[],trash:[]};
+}
+var data=loadData();
 if(!data.debts)data.debts=[];
 if(!data.obligations)data.obligations=[];
 if(!data.accounts)data.accounts=[];
 if(!data.transfers)data.transfers=[];
 if(!data.trash)data.trash=[];
 
-var profile=JSON.parse(localStorage.getItem('pennyProfile')||'null');
+var profile=(function(){
+  var raw=localStorage.getItem('pennyProfile');
+  if(raw){try{return JSON.parse(raw);}catch(e){}}
+  return null;
+})();
 var viewYear,viewMonth,filterCat=null,activeTab='expenses',selCat='food',modalMode='expense';
 var selectedAccId=null,reminderInterval=null,confirmCallback=null;
 
-function saveData(){localStorage.setItem('pennyV6',JSON.stringify(data));}
+function saveData(){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
 function saveProfile(){localStorage.setItem('pennyProfile',JSON.stringify(profile));}
 function initDate(){var d=new Date();viewYear=d.getFullYear();viewMonth=d.getMonth();}
 function getMonthKey(y,m){return y+'-'+String(m+1).padStart(2,'0');}
